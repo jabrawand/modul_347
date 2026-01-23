@@ -22,7 +22,8 @@
 ---
 
 ## Einleitung
-Diese Dokumentation beschreibt die Planung, Umsetzung und Auswertung meines Docker-Projekts zur Bereitstellung von Microservices für ein Informatik-KMU. Die Dokumentation orientiert sich am IPERKA-Modell.
+In dieser Dokumentation wird die Umsetzung eines Docker-Projekts für ein Informatik-KMU beschrieben. Ziel des Projekts ist es, eine funktionierende Container-Infrastruktur bereitzustellen, die verschiedene firmenintere Dienste integriert, stabil läuft und nachvollziehbar dokumentiert ist.
+Die Dokumentation orientiert sich am IPERKA-Modell und zeigt die einzelnen Projektschritte von der Analyse über die Planung und Umsetzung bis hin zur Kontrolle und Auswertung. Dabei liegt der Fokus sowohl auf der technischen Umsetzung sowie dem Testen und der Dokumentation der Ergebnisse.
 
 ---
 
