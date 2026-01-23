@@ -7,3 +7,15 @@
 **Datum:** [Abgabedatum] TODO 
 
 ---
+## Inhaltsverzeichnis
+1. [Einleitung]
+2. [Informieren]
+3. [Planen]
+4. [Entscheiden]
+5. [Realisieren]
+6. [Testen]
+7. [Kontrollieren]
+8. [Auswerten]
+9. [Anhang]
+
+---
