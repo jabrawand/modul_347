@@ -29,6 +29,9 @@ Die Dokumentation orientiert sich am IPERKA-Modell und zeigt die einzelnen Proje
 
 ## 1. Informieren
 
+## 1.1 Ausgangslage
+Im Rahmen dieses Projekts soll für ein Informatik-KMU eine containerisierte Serverlösung mit mehreren Diensten umgesetzt werden.
+
 ---
 
 ## 2. Planen

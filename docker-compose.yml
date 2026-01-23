@@ -1,0 +1,29 @@
+services:
+  mediawiki:
+    image: mediawiki
+    container_name: mediawiki
+    ports:
+      - "8085:80"
+    volumes:
+      - mediawiki_data:/var/www/html
+
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
+    ports:
+      - "8080:80"
+    volumes:
+      - nextcloud_data:/var/www/html
+
+  portainer:
+    image: portainer/portainer-ce
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+volumes:
+mediawiki_data:
+nextcloud_data:
+portainer_data:
