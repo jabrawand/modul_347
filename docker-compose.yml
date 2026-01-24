@@ -18,6 +18,12 @@ services:
     container_name: mediawiki
     ports:
       - "8085:80"
+    environment:
+      MEDIAWIKI_DB_TYPE: mysql
+      MEDIAWIKI_DB_HOST: mediawiki-db
+      MEDIAWIKI_DB_NAME: ${MEDIAWIKI_DB_NAME}
+      MEDIAWIKI_DB_USER: ${MEDIAWIKI_DB_USER}
+      MEDIAWIKI_DB_PASSWORD: ${MEDIAWIKI_DB_PASSWORD}
     volumes:
       - mediawiki_data:/var/www/html
     networks:
@@ -27,10 +33,10 @@ services:
     image: mariadb:11.8
     container_name: mediawiki-db
     environment:
-      MYSQL_DATABASE: 
-      MYSQL_USER:
-      MYSQL_PASSWORD:
-      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: ${MEDIAWIKI_DB_NAME}
+      MYSQL_USER: ${MEDIAWIKI_DB_USER}
+      MYSQL_PASSWORD: ${MEDIAWIKI_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MEDIAWIKI_DB_ROOT_PASSWORD}
     volumes:
       - mediawiki_db:/var/lib/mysql
     networks:
@@ -43,6 +49,12 @@ services:
       - .env
     ports:
       - "8080:80"
+    environment:
+      NEXTCLOUD_DB_TYPE: mysql
+      NEXTCLOUD_DB_HOST: nextcloud-db
+      NEXTCLOUD_DB_NAME: ${NEXTCLOUD_DB_NAME}
+      NEXTCLOUD_DB_USER: ${NEXTCLOUD_DB_USER}
+      NEXTCLOUD_DB_PASSWORD: ${NEXTCLOUD_DB_PASSWORD}
     volumes:
       - nextcloud_data:/var/www/html
     networks:
@@ -52,10 +64,10 @@ services:
     image: mariadb:11.8
     container_name: nextcloud-db
     environment:
-      MYSQL_DATABASE:
-      MYSQL_USER:
-      MYSQL_PASSWORD:
-      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: ${NEXTCLOUD_DB_NAME}
+      MYSQL_USER: ${NEXTCLOUD_DB_USER}
+      MYSQL_PASSWORD: ${NEXTCLOUD_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${NEXTCLOUD_DB_ROOT_PASSWORD}
     volumes:
       - nextcloud_db:/var/lib/mysql
     networks:
