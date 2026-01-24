@@ -23,6 +23,19 @@ services:
     networks:
       - kmu_network
 
+  mediawiki-db:
+    image: mariadb:11.8
+    container_name: mediawiki-db
+    environment:
+      MYSQL_DATABASE: 
+      MYSQL_USER:
+      MYSQL_PASSWORD:
+      MYSQL_ROOT_PASSWORD:
+    volumes:
+      - mediawiki_db:/var/lib/mysql
+    networks:
+      - kmu_network
+
   nextcloud:
     image: nextcloud
     container_name: nextcloud
@@ -35,7 +48,22 @@ services:
     networks:
       - kmu_network
 
+  nextcloud-db:
+    image: mariadb:11.8
+    container_name: nextcloud-db
+    environment:
+      MYSQL_DATABASE:
+      MYSQL_USER:
+      MYSQL_PASSWORD:
+      MYSQL_ROOT_PASSWORD:
+    volumes:
+      - nextcloud_db:/var/lib/mysql
+    networks:
+      - kmu_network
+
 volumes:
   portainer_data:
   mediawiki_data:
+  mediawiki_db:
   nextcloud_data:
+  nextcloud_db:
