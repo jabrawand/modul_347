@@ -12,6 +12,10 @@ services:
       - portainer_data:/data
     networks:
       - kmu_network
+    deploy:
+      resources:
+        limits:
+          memory: 150M
     
   mediawiki:
     image: mediawiki
@@ -28,6 +32,12 @@ services:
       - mediawiki_data:/var/www/html
     networks:
       - kmu_network
+    depends_on:
+      - mediawiki-db
+    deploy:
+      resources:
+        limits:
+          memory: 300M
 
   mediawiki-db:
     image: mariadb:11.8
@@ -41,6 +51,10 @@ services:
       - mediawiki_db:/var/lib/mysql
     networks:
       - kmu_network
+    deploy:
+      resources:
+        limits:
+          memory: 700M
 
   nextcloud:
     image: nextcloud
@@ -59,6 +73,12 @@ services:
       - nextcloud_data:/var/www/html
     networks:
       - kmu_network
+    depends_on:
+      - nextcloud-db
+    deploy:
+      resources:
+        limits:
+          memory: 300M
 
   nextcloud-db:
     image: mariadb:11.8
@@ -72,6 +92,10 @@ services:
       - nextcloud_db:/var/lib/mysql
     networks:
       - kmu_network
+    deploy:
+      resources:
+        limits:
+          memory: 700M
 
 volumes:
   portainer_data:
