@@ -1,4 +1,18 @@
+name: project-347
+
 services:
+
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - kmu_network
+    
   mediawiki:
     image: mediawiki
     container_name: mediawiki
@@ -6,24 +20,22 @@ services:
       - "8085:80"
     volumes:
       - mediawiki_data:/var/www/html
+    networks:
+      - kmu_network
 
   nextcloud:
     image: nextcloud
     container_name: nextcloud
+    env_file:
+      - .env
     ports:
       - "8080:80"
     volumes:
       - nextcloud_data:/var/www/html
-
-  portainer:
-    image: portainer/portainer-ce
-    ports:
-      - "9000:9000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
+    networks:
+      - kmu_network
 
 volumes:
-mediawiki_data:
-nextcloud_data:
-portainer_data:
+  portainer_data:
+  mediawiki_data:
+  nextcloud_data:
