@@ -97,9 +97,49 @@ services:
         limits:
           memory: 700M
 
+  gogs:
+    image: gogs/gogs
+    container_name: gogs
+    ports:
+      - "3000:3000"
+      - "2222:22"
+    volumes:
+      - gogs_data:/data
+    depends_on: 
+      - gogs-db
+    networks:
+      - kmu_network
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+
+  gogs-db:
+    image: mariadb:11.8
+    container_name: gogs-db
+    environment:
+      MYSQL_DATABASE: ${GOGS_DB_NAME}
+      MYSQL_USER: ${GOGS_DB_USER}
+      MYSQL_PASSWORD: ${GOGS_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${GOGS_DB_ROOT_PASSWORD}
+    volumes:
+      - gogs_db:/var/lib/mysql
+    networks:
+      - kmu_network
+    deploy:
+      resources:
+        limits:
+          memory: 700M
+
+networks:
+  kmu_network:
+    driver: bridge
+
 volumes:
   portainer_data:
   mediawiki_data:
   mediawiki_db:
   nextcloud_data:
   nextcloud_db:
+  gogs_data:
+  gogs_db:
