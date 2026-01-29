@@ -60,14 +60,8 @@ $wgEmailAuthentication = true;
 $wgDBtype = "mysql";
 $wgDBserver = "mediawiki-db";
 $wgDBname = "mediawiki";
-$wgDBuser = getenv('MEDIAWIKI_DB_USER');
-if ($wgDBuser === false) {
-	die("ERROR: User not set");
-}
-$wgDBpassword = getenv('MEDIAWIKI_DB_PASSWORD');
-if ($wgDBpassword === false) {
-    die("ERROR: Password not set!");
-}
+$wgDBuser = "wikiuser";
+$wgDBpassword = "wikipass";
 
 # MySQL specific settings
 $wgDBprefix = "";
@@ -109,14 +103,14 @@ $wgLocaltimezone = "UTC";
 ## be publicly accessible from the web.
 #$wgCacheDirectory = "$IP/cache";
 
-$wgSecretKey = getenv('MEDIAWIKI_SECRET_KEY');
+$wgSecretKey = "194091e8171d33ef3a5a3d32448633d0b6e9a6249e66fa4d5faf724c7f0bbb97";
 
 # Changing this will log out all existing sessions.
 $wgAuthenticationTokenVersion = "1";
 
 # Site upgrade key. Must be set to a string (default provided) to turn on the
 # web installer while LocalSettings.php is in place
-$wgUpgradeKey = getenv('MEDIAWIKI_UPGRADEKEY');
+$wgUpgradeKey = "e488e1c4474a1786";
 
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
