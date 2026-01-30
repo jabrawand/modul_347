@@ -74,6 +74,7 @@ Mögliche Technologien:
 Das Ziel ist der Aufbau einer funktionsfähigen, dokumentierten und getesteten Docker-Infrastruktur, welche alle Anforderungen erfüllt und einen realitätsnahen Betrieb simuliert.
 
 ![Sytemübersicht](./images/Systemuebersicht.png)
+*Das Bild für die Systemübersicht wurde von der KI generiert*
 
 ---
 # 3. Planen 
