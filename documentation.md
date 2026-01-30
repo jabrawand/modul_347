@@ -73,6 +73,8 @@ Mögliche Technologien:
 ## 2.5 Zielsetzung des Projekts
 Das Ziel ist der Aufbau einer funktionsfähigen, dokumentierten und getesteten Docker-Infrastruktur, welche alle Anforderungen erfüllt und einen realitätsnahen Betrieb simuliert.
 
+![Sytemübersicht](./images/Systemuebersicht.png)
+
 ---
 # 3. Planen 
 
@@ -101,7 +103,7 @@ Das Projekt wurde im Zeitraum vom **09.01.2026 bis 30.01.2026** als Einzelarbeit
 | 17.01. – 23.01.2026 | Realisieren               | Erstellung der docker-compose.yml, Aufbau der Container, Konfiguration von MediaWiki, Nextcloud, Gogs und Portainer  |
 | 24.01. – 26.01.2026 | Testen                    | Durchführung der Funktionstests, Behebung von Fehlern (u. a. MariaDB-Initialisierung, Berechtigungen bei Nextcloud)  |
 | 27.01. – 29.01.2026 | Kontrollieren / Auswerten | Überprüfung der Ergebnisse, Ergänzung der Dokumentation, Reflexion und Optimierungen                                 |
-|30.01.2026|Abgabe|Finalisierung und Abgabe des Projekts|
+|30.01.2026|Abgabe|Abgabe des Projekts|
 ---
 
 ## 3.3 Testplanung
@@ -131,10 +133,35 @@ Für jeden Hauptdienst wurden Funktionstests definiert (siehe Kapitel 6)
 ---
 ## 4.2 Auswahl Git-Server
 
-**Tabelle 4.2– Vergleich Gitea & Gogs**
+**Tabelle 4.2 – Vergleich Gitea & Gogs**
+
+| Eigenschaft | Gogs | Gitea |
+| ----------- | ---- | ----- |
+| Entwicklung |	Eigenständig | Fork von Gogs |
+| Ressourcennutzung |	Leichtgewichtig |	Etwas schwerer |
+| Installation |	Einfach und schnell |	Einfach, aber umfangreicher |
+| Funktionsumfang |	Grundlegende Features | Zusätzliche Features |
+|Community |	Klein, aber aktiv |	Wachsende Community |
+| Updates |	Regelmäßig, aber langsamer |	Häufiger und schneller |
 
 **Entscheidung**: Gogs
 **Begrünung**: Ressourcenarm und für KMU ausreichend.
+
+---
+
+## 4.3 Auswahl Persistenz
+
+**Tabelle 4.3 – Vergleich Volumes & Bind Mounts**
+
+| Eigenschaft | Docker Volumes | Bind Mounts |
+| ----------- | ---- | ----- |
+| Verwaltung |	Docker-CLI | Direkt auf Host |
+| Isolation |	Unabhängig von Host |	Direkt gebunden |
+| Datenpersistenz |	Empfohlen für dauerhafte Lösungen |	Entwicklungstests |
+| Leistung |	Besser in vielen Umgebungen | Variabel |
+
+**Entscheidung**: Volumes
+**Begrünung**: besser für dauerhafte Lösungen, unabhängig von Host
 
 ---
 
@@ -160,8 +187,11 @@ Alle Dienste verwenden Docker Volumes zur persistenten Datenspeicherung.
 ## 5.4 Sicherheit
 
 - Passwörter sind im `.env`-file abgelegt
-- Reduzierte Container-Rechte
-- Trennung der Dienste
+- Trennung der Dienste in Microservices
+- LocalSettings.php nicht auf GitHub
+
+Was ich nicht einhalten konnte:
+- Reduzierte Container Rechte konnte ich nicht umsetzten. Ich will mich aber darüber noch genauer Informieren und meine Präsentation über dieses Thema halten.
 
 ---
 
@@ -201,6 +231,7 @@ Das Testkonzept definiert welche Komponenten getestet werden und welche Kriterie
 | T3       | Containerübersicht anzeigen | Alle laufenden Container werden korrekt angezeigt                                    | OK       |
 | T4       | Neustart                    | Container kann erfolgreich neugestartet werden, erneutes Login als Admin ist möglich | OK       |
 
+
 ![Portainer](./images/KMU_portainer.png)
 
 **Tabelle 6.2– Testfälle Mediawiki**
@@ -211,6 +242,8 @@ Das Testkonzept definiert welche Komponenten getestet werden und welche Kriterie
 | T2        | Neue Wiki-Seite erstellen | Seite wird gespeichert und angezeigt                                                                                | OK       |
 | T3        | Neustart Container        | Container kann erfolgreich neugestartet werden, erneutes Login ist möglich und erstellte Seiten sind noch vorhanden | OK       |
 
+![Mediawiki](./images/KMU_mediawiki.png)
+
 **Tabelle 6.2– Testfälle Nextcloud**
 
 | Testffall | Beschreibung       | Erwartetes Ergebnis                                                                                        | Ergebnis |
@@ -219,6 +252,8 @@ Das Testkonzept definiert welche Komponenten getestet werden und welche Kriterie
 | T2        | Anmelden           | Erfolgreiche Anmeldung                                                                                     | OK       |
 | T3        | Datei hochladen    | Datei kann hochgeladen werden                                                                              | OK       |
 | T4        | Neustart Container | Container kann erfolgreich neugestartet werden, erneutes Login ist möglich und Dateien sind noch vorhanden | OK       |
+
+![Nextcloud](./images/KMU_nextcloud.png)
 
 **Tabelle 6.2– Testfälle Gogs**
 
@@ -229,6 +264,7 @@ Das Testkonzept definiert welche Komponenten getestet werden und welche Kriterie
 | T3        | Repository erstellen | Repository wird erfolgreich angelegt                                                                         | OK       |
 | T4        | Neustart Container   | Container kann erfolgreich neugestartet werden, erneutes Login ist möglich und Repository ist noch vorhanden | OK       |
 
+![Gogs](./images/KMU_gogs.png)
 
 ---
 # 7. Sicherheitskonzept
