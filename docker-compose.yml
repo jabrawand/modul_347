@@ -1,3 +1,4 @@
+
 name: project-347
 
 services:
@@ -5,6 +6,7 @@ services:
   portainer:
     image: portainer/portainer-ce
     container_name: portainer
+    restart: always
     ports:
       - "9000:9000"
     volumes:
@@ -79,6 +81,7 @@ services:
   nextcloud-db:
     image: mariadb:11.8
     container_name: nextcloud-db
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${NEXTCLOUD_DB_ROOT_PASSWORD}
       MYSQL_PASSWORD: ${NEXTCLOUD_DB_PASSWORD}
@@ -93,24 +96,25 @@ services:
         limits:
           memory: 700M
 
-  gogs:
-    image: gogs/gogs
-    container_name: gogs
+  gitea:
+    image: gitea/gitea:latest
+    container_name: gitea
+    restart: always
     ports:
-      - "3000:3000"
-      - "2222:22"
+      - "3000:3000"   # Web UI
+      - "2222:22"     # Git via SSH
     environment:
-      USER: ${GOGS_DB_USER}
-      PASSWD: ${GOGS_DB_PASSWORD}
-      DB_TYPE: mysql
-      DB_HOST: db:3306
-      DB_NAME: gogs
-      DB_USER: ${GOGS_DB_USER}
-      DB_PASSWD: ${GOGS_DB_PASSWORD}
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__database__DB_TYPE=postgres
+      - GITEA__database__HOST=gitea-db:5432
+      - GITEA__database__NAME=gitea
+      - GITEA__database__USER=gitea
+      - GITEA__database__PASSWD=root
     volumes:
-      - gogs_data:/data
+      - gitea_data:/data
     depends_on: 
-      - gogs-db
+      - gitea-db
     networks:
       - kmu_network
     deploy:
@@ -118,16 +122,17 @@ services:
         limits:
           memory: 300M
 
-  gogs-db:
-    image: mariadb:11.8
-    container_name: gogs-db
+  gitea-db:
+    image: postgres:16
+    container_name: gitea-db
+    restart: always
     environment:
-      MYSQL_DATABASE: ${GOGS_DB_NAME}
-      MYSQL_USER: ${GOGS_DB_USER}
-      MYSQL_PASSWORD: ${GOGS_DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${GOGS_DB_ROOT_PASSWORD}
+      POSTGRES_DB: gitea
+      POSTGRES_USER: gitea
+      POSTGRES_PASSWORD: root
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - gogs_db:/var/lib/mysql
+      - gitea_db:/var/lib/postgresql/data
     networks:
       - kmu_network
     deploy:
@@ -145,6 +150,6 @@ volumes:
   mediawiki_db:
   nextcloud_data:
   nextcloud_db:
-  gogs_data:
-  gogs_db:
+  gitea_data:
+  gitea_db:
   nextcloud_config:
