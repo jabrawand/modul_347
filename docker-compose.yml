@@ -65,7 +65,8 @@ services:
       MYSQL_USER: ${NEXTCLOUD_DB_USER}
       MYSQL_HOST: nextcloud-db
     volumes:
-      - nextcloud_data:/var/www/html/data
+      - nextcloud_data:/var/www/html
+      - nextcloud_config:/var/www/html/config
     networks:
       - kmu_network
     depends_on:
@@ -139,3 +140,4 @@ volumes:
   nextcloud_db:
   gogs_data:
   gogs_db:
+  nextcloud_config:
