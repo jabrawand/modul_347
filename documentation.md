@@ -48,7 +48,7 @@ Folgende Anforderungen wurden vom Auftraggeber definiert:
 | ---------- | --------------------------- | ---- |
 | MediaWiki  | Internes Firmen-Wiki        | 8085 |
 | Nextcloud  | Filesharing & Kollaboration | 8081 |
-| Git-Server | GitLab                      |      |
+| Git-Server | Versionsverwaltung          |      |
 | Portainer  | Monitoring                  | 9000 |
 
 ---
@@ -189,7 +189,6 @@ Alle Dienste verwenden Docker Volumes zur persistenten Datenspeicherung.
 
 - Passwörter sind im `.env`-file abgelegt
 - Trennung der Dienste in Microservices
-- LocalSettings.php nicht auf GitHub
 
 Was ich nicht einhalten konnte:
 - Reduzierte Container Rechte konnte ich nicht umsetzten. Ich will mich aber darüber noch genauer Informieren und meine Präsentation über dieses Thema halten.
@@ -197,8 +196,36 @@ Was ich nicht einhalten konnte:
 ---
 
 ## 5.5 Probleme & Lösungen
-Das grösste Problem war die erfolgreiche Konfiguration von Mediawiki. Das heruntergeladene LocalSettings.php wurde nicht erkannt und nach jedem Neustart musste die Konfiguration neu gemacht werden.
-Das Problem war, dass ich nach dem Neustart die Installationsseite refresht habe und dadurch ein neues php-file generiert wurde.
+
+Während der Umsetzung traten bei einzelnen Diensten typische Konfigurations- und Initialisierungsprobleme auf. Diese konnten durch Analyse der Logs, Anpassung der Docker-Konfiguration sowie erneute Initialisierung der Dienste behoben werden.
+
+### Problem 1: MediaWiki – Endlosschleife nach Neustart
+
+**Problem:**  
+Nach der erfolgreichen Erstkonfiguration von MediaWiki und einem Neustart des Containers wurde die des Webbrowsers lediglich neu geladen. Dabei startete der Setup-Modus von MediaWiki neu und die Datei `LocalSettings.php` wurde neu generiert.
+
+**Lösung:**  
+Durch erneutes direktes Aufrufen von `http://localhost:8085` wurde die Installation korrekt abgeschlossen und MediaWiki konnte normal gestartet werden. Anschliessend blieb die Konfiguration auch nach weiteren Neustarts erhalten.
+
+---
+
+### Problem 2: Nextcloud – Daten nicht persistent gespeichert
+
+**Problem:**  
+Bei Nextcloud wurden hochgeladene Dateien und Konfigurationen nach einem Neustart des Containers nicht gespeichert. Ursache war ein fehlendes Volume für die Konfigurations- und Applikationsdaten.
+
+**Lösung:**  
+Es wurde ein zusätzliches Docker Volume für Nextcloud definiert und korrekt eingebunden. Dadurch konnten Konfigurationsdateien und Benutzerdaten persistent gespeichert werden und blieben auch nach Neustarts erhalten.
+
+---
+
+### Problem 3: Gogs – Benutzererstellung und Login nicht möglich
+
+**Problem:**  
+Die Login-Variablen für Gogs wurden initial im docker-compose-File definiert, jedoch wurde der entsprechende Benutzer in der Datenbank nicht automatisch angelegt. Eine manuelle Benutzererstellung über die Datenbank-Shell war zwar möglich, dennoch musste die webbasierte Ersteinrichtung durchgeführt werden. Nach Abschluss der Konfiguration war ein erneutes Erstellen eines Benutzers notwendig, da ein Login mit dem zuvor angelegten Benutzer nicht funktionierte.
+
+**Teillösung / Erkenntnis:**  
+Durch das Weitergeben der Login-Variablen auch an den Gogs-Webcontainer konnte die Benutzererstellung teilweise automatisiert werden. Dennoch ist bei Gogs eine manuelle Ersteinrichtung über die Weboberfläche zwingend erforderlich. Benutzerkonten müssen nach Abschluss dieser Ersteinrichtung neu erstellt werden, da vorher angelegte Benutzer nicht übernommen werden.
 
 
 ---
@@ -212,8 +239,6 @@ Die Tests wurden in einer kontrollierten Umgebung durchgeführt, welche dem gepl
 - lokaler Browserzugriff
 
 ---
-## 6.2 Testkonzept
-Das Testkonzept definiert welche Komponenten getestet werden und welche Kriterien für einen erfolgreichen Test erfüllt sein müssen. 
 
 **Testzeil**: 
 - Sicherstellung der Erreichbarkeit aller Dienste
@@ -270,29 +295,63 @@ Das Testkonzept definiert welche Komponenten getestet werden und welche Kriterie
 ---
 # 7. Sicherheitskonzept
 
-## 7.1 Ziele
+## 7.1 Schutzziele
 
-- Vertraulichkeit
-- Integrität
-- Verfügbarkeit
+Ziel des Sicherheitskonzepts ist es, den sicheren Betrieb der containerisierten Infrastruktur zu gewährleisten. Dabei orientiert sich das Konzept an den drei grundlegenden Schutzzielen der Informationssicherheit.
+
+**Vertraulichkeit**  
+Sensible Daten wie Benutzerkonten, Passwörter, Dateien und Konfigurationsinformationen sollen vor unbefugtem Zugriff geschützt werden.
+
+**Integrität**  
+Es muss sichergestellt werden, dass Daten und Konfigurationen nicht unbemerkt verändert oder manipuliert werden können.
+
+**Verfügbarkeit**  
+Alle Dienste sollen auch nach Neustarts oder kleineren Störungen weiterhin zuverlässig verfügbar sein.
 
 ---
-## 7.2 Container-spezifische Risiken
 
-- Container Breakout
-- Unsichere Secrets
-- Fehlende Ressourcenlimits
+## 7.2 Bedrohungen und Risiken
+
+Beim Betrieb containerisierter Anwendungen bestehen verschiedene sicherheitsrelevante Risiken, welche im Rahmen dieses Projekts berücksichtigt wurden:
+
+- Unsichere Speicherung von Zugangsdaten
+    
+- Fehlkonfiguration von Docker-Containern
+    
+- Zu hohe Rechte einzelner Container (Container Breakout)
+    
+- Datenverlust bei fehlender oder falscher Persistenz
+    
+- Öffentliche Erreichbarkeit interner Dienste
+    
 
 ---
-## 7.3 Massnahmen
 
-- `.env` im `.gitignore`
-- Ressourcenkontrollen
-- Minimale Capabilities
+## 7.3 Umgesetzte Sicherheitsmassnahmen
+
+Zur Reduktion der identifizierten Risiken wurden folgende Sicherheitsmassnahmen umgesetzt:
+
+- Verwendung von `.env`-Dateien zur Auslagerung sensibler Zugangsdaten
+    
+- Ausschluss der `.env`-Datei aus der Versionsverwaltung mittels `.gitignore`
+    
+- Einsatz von Docker Volumes zur persistenten und sicheren Datenspeicherung
+    
+- Trennung der einzelnen Dienste in separate Container
+    
+- Nutzung eines internen Docker-Netzwerks zur Isolation der Services
+    
+- Einschränkung der Ressourcen (RAM) pro Container
+    
+- Verzicht auf unnötige Container-Rechte
 
 ---
 # 8. Auswertung / Reflexion
 
-Durch dieses Projekt konnte ich praktische Erfahrung im Aufbau einer Microservice-Infrastruktur mit Docker sammeln. Besonders lehrreich waren die Fehlersuche bei Nextcloud, der Umgang mit Persistenz und das Thema Sicherheit in containerisierten Umgebungen.
+Durch die Umsetzung dieses Projekts konnte ich umfassende praktische Erfahrungen im Aufbau und Betrieb einer containerisierten Microservice-Infrastruktur mit Docker sammeln. Besonders wertvoll war die Arbeit mit mehreren voneinander abhängigen Diensten sowie deren Zusammenspiel innerhalb einer gemeinsamen Docker-Umgebung.
 
-Ich habe gelernt, dass Security-Massnahmen sorgfältig geplant werden müssen und dass eine saubere Dokumentation essenziell für Wartung und Nachvollziehbarkeit ist.
+Während der Realisierungs- und Testphase traten verschiedene praxisnahe Probleme auf. Dazu gehörten unter anderem Initialisierungsprobleme bei MariaDB, fehlende Persistenz bei Nextcloud sowie die komplexe Benutzer- und Ersteinrichtung von Gogs. Diese Herausforderungen zeigten deutlich, wie wichtig eine saubere Konfiguration von Volumes, Umgebungsvariablen und Initialisierungsabläufen ist.
+
+Durch das systematische Analysieren von Logdateien, gezieltes Testen einzelner Komponenten und schrittweises Eingrenzen der Fehlerursachen konnten die meisten Probleme behoben werden. Dabei wurde mir bewusst, dass nicht alle Dienste vollständig automatisiert eingerichtet werden können und dass bei gewissen Applikationen – wie beispielsweise Gogs – eine manuelle Ersteinrichtung trotz vordefinierter Variablen notwendig bleibt.
+
+Zusammenfassend hat mir dieses Projekt gezeigt, dass der Einsatz von Docker nicht nur technisches Wissen erfordert, sondern auch ein strukturiertes Vorgehen, Geduld bei der Fehlersuche und eine sorgfältige Dokumentation. Die gewonnenen Erkenntnisse sind praxisnah und lassen sich gut auf reale KMU-Umgebungen übertragen, insbesondere in Bezug auf Persistenz, Sicherheit und Wartbarkeit.
