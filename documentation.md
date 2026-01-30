@@ -19,7 +19,9 @@
 ---
 # 1. Einleitung
 
-Im Rahmen dieses Projektes wurde für ein Informatik-KMU eine containerisierte Serverlösung mit mehreren Diensten realisiert. Ziel war es, mithilfe von Docker und docker-compose einen Microservice-basierten Applikationsstack aufzubauen, welcher firmeninterne Services wie Filesharing, Versionsverwaltung und ein Wiki bereitstellt.
+Im Rahmen dieses Projektes wurde für ein Informatik-KMU eine containerisierte Serverlösung mit mehreren Diensten realisiert. Ziel war es, mithilfe von Docker und docker-compose einen Microservice-basierten Applikationsstack aufzubauen, der firmeninterne Services wie Filesharing, Versionsverwaltung und ein Wiki bereitstellt.
+
+Der Fokus lag dabei nicht nur auf der technischen Umsetzung, sondern auch auf einer sauberen Dokumentation, dem Einsatz von Versionsverwaltung sowie der Berücksichtigung von Sicherheits- und Testaspekten gemäss dem IPERKA-Modell.
 
 ---
 
@@ -84,27 +86,22 @@ Die Umsetzung erfolgt nach dem IPERKA-Modell:
 - Auswerten
 
 ---
-## 3.2Arbeitsplanung 
-Das Projekt wurde als Einzelarbeit durchgeführt.
+## 3.2 Arbeitsplanung
 
-**Informieren**
-- Anforderungen und Randbedingungen analysieren
-- Informationen über Images auf Docker Hub holen
-- 
+Das Projekt wurde im Zeitraum vom **09.01.2026 bis 30.01.2026** als Einzelarbeit durchgeführt. Die Arbeitsplanung orientierte sich am IPERKA-Modell und wurde zeitlich in einzelne Phasen unterteilt. Dadurch konnte eine strukturierte und zielgerichtete Umsetzung sichergestellt werden.
 
-**Tabelle 3.1 – Arbeitsplanung nach IPERKA-Phasen**
+**Tabelle 3.1 – Zeitliche Arbeitsplanung nach IPERKA-Phasen**
 
-| Phase         | Aufgabe                                       |
-| ------------- | --------------------------------------------- |
-| Informieren   | Anforderungen und Randbedingungen analysieren |
-| Planen        | Erstellung Zeitplan und Ressourcenplanung     |
-| Entscheiden   | Technologien und Architektur auswählen        |
-| Realisieren   | Aufbau Docker-Container und Konfiguration     |
-| Testen        | Testfälle erstellen und durchführen           |
-| Kontrollieren | Ergebnisse prüfen, Abweichungen analysieren   |
-| Auswerten     | Dokumentation abschliessen, Reflektion        |
-
-
+|                     |                           |                                                                                                                      |
+| ------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Zeitraum            | Phase                     | Tätigkeiten                                                                                                          |
+| 09.01. – 10.01.2026 | Informieren               | Analyse der Projektanforderungen, Aufgabenstellung studieren und verstehen, erste Recherche auf Docker Hub zu Images |
+| 11.01. – 13.01.2026 | Planen                    | Grobkonzept der Architektur, Definition der Services, Netzwerk- und Volumenplanung, Erstellung eines Zeitplans       |
+| 14.01. – 16.01.2026 | Entscheiden               | Auswahl der Technologien, Festlegung der Container-Struktur und Ressourcenlimits                                     |
+| 17.01. – 23.01.2026 | Realisieren               | Erstellung der docker-compose.yml, Aufbau der Container, Konfiguration von MediaWiki, Nextcloud, Gogs und Portainer  |
+| 24.01. – 26.01.2026 | Testen                    | Durchführung der Funktionstests, Behebung von Fehlern (u. a. MariaDB-Initialisierung, Berechtigungen bei Nextcloud)  |
+| 27.01. – 29.01.2026 | Kontrollieren / Auswerten | Überprüfung der Ergebnisse, Ergänzung der Dokumentation, Reflexion und Optimierungen                                 |
+|30.01.2026|Abgabe|Finalisierung und Abgabe des Projekts|
 ---
 
 ## 3.3 Testplanung
@@ -134,33 +131,10 @@ Für jeden Hauptdienst wurden Funktionstests definiert (siehe Kapitel 6)
 ---
 ## 4.2 Auswahl Git-Server
 
-**Tabelle 4.2 – Vergleich Gitea & Gogs**
-
-| Eigenschaften | Gogs | Gitea |
-| ------------- | ------- | ----------- |
-| Ressourcennutzung | Leichtgewichtig | etwas schwerer |
-| Installation | Einfach und schnell | Einfach |
-| Funktionsumfang | Grundlegende Features | Zusätzliche Features |
-| Community | Klein | Wachsend |
-| Updates | Regelmässig, weniger oft | Häufig und schneller |
+**Tabelle 4.2– Vergleich Gitea & Gogs**
 
 **Entscheidung**: Gogs
 **Begrünung**: Ressourcenarm und für KMU ausreichend.
-
----
-
-## 4.3 Auswahl Persistenz
-
-**Tabelle 4.3 - Vergleich Volumes & Bind Mounts**
-
-| Eigenschaften | Volumes | Bind Mounts |
-| ------------- | ------- | ----------- |
-| Verwaltung | Docker-CLI | Direkt auf Host |
-| Isolation | Unabhängig von Host | an Host gebunden |
-| Datenpersistenz | Dauerhafte Lösung | Entwicklertests |
-
-**Entscheidung**: Docker Volumes
-**Begrünung**: Unabhängig vom Host, Dauerhaft
 
 ---
 
@@ -192,9 +166,8 @@ Alle Dienste verwenden Docker Volumes zur persistenten Datenspeicherung.
 ---
 
 ## 5.5 Probleme & Lösungen
-Bei Nextcloud traten Probleme mit Schreibrechten und Security-Optionen auf. Diese wurden durch temporäre Anpassungen während der Initialisierung behoben.
-
-N: nicht erreichbar über 8081
+Das grösste Problem war die erfolgreiche Konfiguration von Mediawiki. Das heruntergeladene LocalSettings.php wurde nicht erkannt und nach jedem Neustart musste die Konfiguration neu gemacht werden.
+Das Problem war, dass ich nach dem Neustart die Installationsseite refresht habe und dadurch ein neues php-file generiert wurde.
 
 
 ---
@@ -221,41 +194,41 @@ Das Testkonzept definiert welche Komponenten getestet werden und welche Kriterie
 
 **Tabelle 6.1– Testfälle Portainer**
 
-| Testfall | Beschreibung                | Erwartetes Ergebnis                               |
-| -------- | --------------------------- | ------------------------------------------------- |
-| T1       | Aufrufen der Weboberfläche  | Protainer ist über Port 9000 erreichbar           |
-| T2       | Login mit Admin-User        | erfolgreiche Anmeldung                            |
-| T3       | Containerübersicht anzeigen | Alle laufenden Container werden korrekt angezeigt |
-| T4       | Neustart                    | Container kann erfolgreich neugestartet werden    |
+| Testfall | Beschreibung                | Erwartetes Ergebnis                                                                  | Ergebnis |
+| -------- | --------------------------- | ------------------------------------------------------------------------------------ | -------- |
+| T1       | Aufrufen der Weboberfläche  | Protainer ist über Port 9000 erreichbar                                              | OK       |
+| T2       | Login mit Admin-User        | erfolgreiche Anmeldung                                                               | OK       |
+| T3       | Containerübersicht anzeigen | Alle laufenden Container werden korrekt angezeigt                                    | OK       |
+| T4       | Neustart                    | Container kann erfolgreich neugestartet werden, erneutes Login als Admin ist möglich | OK       |
+
+![Portainer](./images/KMU_portainer.png)
 
 **Tabelle 6.2– Testfälle Mediawiki**
 
-| Testffall | Beschreibung              | Erwartetes Ergebnis                    |
-| --------- | ------------------------- | -------------------------------------- |
-| T1        | Aufruf MediaWiki          | MediaWiki ist auf Port 8085 erreichbar |
-| T2        | Neue Wiki-Seite erstellen | Seite wird gespeichert und angezeigt   |
-| T3        | Neustart Container        | Inhalte bleiben erhalten               |
+| Testffall | Beschreibung              | Erwartetes Ergebnis                                                                                                 | Ergebnis |
+| --------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------- | -------- |
+| T1        | Aufruf MediaWiki          | MediaWiki ist auf Port 8085 erreichbar                                                                              | OK       |
+| T2        | Neue Wiki-Seite erstellen | Seite wird gespeichert und angezeigt                                                                                | OK       |
+| T3        | Neustart Container        | Container kann erfolgreich neugestartet werden, erneutes Login ist möglich und erstellte Seiten sind noch vorhanden | OK       |
 
 **Tabelle 6.2– Testfälle Nextcloud**
 
-| Testffall | Beschreibung       | Erwartetes Ergebnis                    |
-| --------- | ------------------ | -------------------------------------- |
-| T1        | Aufruf Nextcloud   | Nextcloud ist auf Port 8081 erreichbar |
-| T2        | Anmelden           | Erfolgreiche Anmeldung                 |
-| T3        | Datei hochladen    | Datei kann hochgeladen werden          |
-| T4        | Neustart Container | Inhalte bleiben erhalten               |
+| Testffall | Beschreibung       | Erwartetes Ergebnis                                                                                        | Ergebnis |
+| --------- | ------------------ | ---------------------------------------------------------------------------------------------------------- | -------- |
+| T1        | Aufruf Nextcloud   | Nextcloud ist auf Port 8081 erreichbar                                                                     | OK       |
+| T2        | Anmelden           | Erfolgreiche Anmeldung                                                                                     | OK       |
+| T3        | Datei hochladen    | Datei kann hochgeladen werden                                                                              | OK       |
+| T4        | Neustart Container | Container kann erfolgreich neugestartet werden, erneutes Login ist möglich und Dateien sind noch vorhanden | OK       |
 
 **Tabelle 6.2– Testfälle Gogs**
 
-| Testffall | Beschreibung         | Erwartetes Ergebnis                  |
-| --------- | -------------------- | ------------------------------------ |
-| T1        | Aufruf Gogs          | Gogs ist auf Port 3000 erreichbar    |
-| T2        | Anmelden             | Erfolgreiche Anmeldung               |
-| T3        | Repository erstellen | Repository wird erfolgreich angelegt |
-| T4        | Neustart             | Inhalte bleiben erhalten             |
+| Testffall | Beschreibung         | Erwartetes Ergebnis                                                                                          | Ergebnis |
+| --------- | -------------------- | ------------------------------------------------------------------------------------------------------------ | -------- |
+| T1        | Aufruf Gogs          | Gogs ist auf Port 3000 erreichbar                                                                            | OK       |
+| T2        | Anmelden             | Erfolgreiche Anmeldung                                                                                       | OK       |
+| T3        | Repository erstellen | Repository wird erfolgreich angelegt                                                                         | OK       |
+| T4        | Neustart Container   | Container kann erfolgreich neugestartet werden, erneutes Login ist möglich und Repository ist noch vorhanden | OK       |
 
----
-## 6.4 Testprotokoll
 
 ---
 # 7. Sicherheitskonzept
@@ -276,7 +249,6 @@ Das Testkonzept definiert welche Komponenten getestet werden und welche Kriterie
 ---
 ## 7.3 Massnahmen
 
-- Kein Root-Zugriff
 - `.env` im `.gitignore`
 - Ressourcenkontrollen
 - Minimale Capabilities
