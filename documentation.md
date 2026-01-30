@@ -48,7 +48,7 @@ Folgende Anforderungen wurden vom Auftraggeber definiert:
 | ---------- | --------------------------- | ---- |
 | MediaWiki  | Internes Firmen-Wiki        | 8085 |
 | Nextcloud  | Filesharing & Kollaboration | 8081 |
-| Git-Server | Versionsverwaltung          |      |
+| Git-Server | Versionsverwaltung          | 3000 |
 | Portainer  | Monitoring                  | 9000 |
 
 ---
@@ -145,8 +145,8 @@ Für jeden Hauptdienst wurden Funktionstests definiert (siehe Kapitel 6)
 |Community |	Klein, aber aktiv |	Wachsende Community |
 | Updates |	Regelmäßig, aber langsamer |	Häufiger und schneller |
 
-**Entscheidung**: Gogs
-**Begrünung**: Ressourcenarm und für KMU ausreichend.
+**Entscheidung**: Gitea
+**Begrünung**: Aufgrund von Problemen bei der Benutzererstellung und Anmeldung mit Gogs sowie der teilweise eingeschränkten Initialisierung über Umgebungsvariablen wurde ein Wechsel zu Gitea vorgenommen. Gitea bietet eine stabilere Docker-Integration, eine bessere Dokumentation und eine zuverlässige Ersteinrichtung, wodurch sich der Dienst besser für den Einsatz in einem KMU eignet.
 
 ---
 
@@ -224,8 +224,8 @@ Es wurde ein zusätzliches Docker Volume für Nextcloud definiert und korrekt ei
 **Problem:**  
 Die Login-Variablen für Gogs wurden initial im docker-compose-File definiert, jedoch wurde der entsprechende Benutzer in der Datenbank nicht automatisch angelegt. Eine manuelle Benutzererstellung über die Datenbank-Shell war zwar möglich, dennoch musste die webbasierte Ersteinrichtung durchgeführt werden. Nach Abschluss der Konfiguration war ein erneutes Erstellen eines Benutzers notwendig, da ein Login mit dem zuvor angelegten Benutzer nicht funktionierte.
 
-**Teillösung / Erkenntnis:**  
-Durch das Weitergeben der Login-Variablen auch an den Gogs-Webcontainer konnte die Benutzererstellung teilweise automatisiert werden. Dennoch ist bei Gogs eine manuelle Ersteinrichtung über die Weboberfläche zwingend erforderlich. Benutzerkonten müssen nach Abschluss dieser Ersteinrichtung neu erstellt werden, da vorher angelegte Benutzer nicht übernommen werden.
+**Lösung / Erkenntnis:**  
+Nach Analyse der Dokumentation und Tests wurde entschieden, von Gogs auf Gitea zu wechseln. Gitea bietet eine stabilere Initialisierung, bessere Dokumentation und eine zuverlässige Benutzerverwaltung. Nach dem Wechsel traten keine weiteren Probleme bei der Anmeldung oder Konfiguration auf.
 
 
 ---
@@ -268,7 +268,7 @@ Die Tests wurden in einer kontrollierten Umgebung durchgeführt, welche dem gepl
 | T2        | Neue Wiki-Seite erstellen | Seite wird gespeichert und angezeigt                                                                                | OK       |
 | T3        | Neustart Container        | Container kann erfolgreich neugestartet werden, erneutes Login ist möglich und erstellte Seiten sind noch vorhanden | OK       |
 
-![Mediawiki](./images/KMU_mediawiki.png)
+![MediaWiki](./images/KMU_mediawiki.png)
 
 **Tabelle 6.2– Testfälle Nextcloud**
 
@@ -281,16 +281,16 @@ Die Tests wurden in einer kontrollierten Umgebung durchgeführt, welche dem gepl
 
 ![Nextcloud](./images/KMU_nextcloud.png)
 
-**Tabelle 6.2– Testfälle Gogs**
+**Tabelle 6.2– Testfälle Gitea**
 
-| Testffall | Beschreibung         | Erwartetes Ergebnis                                                                                          | Ergebnis |
-| --------- | -------------------- | ------------------------------------------------------------------------------------------------------------ | -------- |
-| T1        | Aufruf Gogs          | Gogs ist auf Port 3000 erreichbar                                                                            | OK       |
-| T2        | Anmelden             | Erfolgreiche Anmeldung                                                                                       | OK       |
+| Testffall | Beschreibung         | Erwartetes Ergebnis      | Ergebnis |
+| --------- | -------------------- | ------------------------ | -------- |
+| T1        | Aufruf Gitea          | Gitea ist auf Port 3000 erreichbar       | OK       |
+| T2        | Anmelden             | Erfolgreiche Anmeldung                                                | OK     |
 | T3        | Repository erstellen | Repository wird erfolgreich angelegt                                                                         | OK       |
 | T4        | Neustart Container   | Container kann erfolgreich neugestartet werden, erneutes Login ist möglich und Repository ist noch vorhanden | OK       |
 
-![Gogs](./images/KMU_gogs.png)
+![Gitea](./images/KMU_gogs.png)
 
 ---
 # 7. Sicherheitskonzept
@@ -350,8 +350,10 @@ Zur Reduktion der identifizierten Risiken wurden folgende Sicherheitsmassnahmen 
 
 Durch die Umsetzung dieses Projekts konnte ich umfassende praktische Erfahrungen im Aufbau und Betrieb einer containerisierten Microservice-Infrastruktur mit Docker sammeln. Besonders wertvoll war die Arbeit mit mehreren voneinander abhängigen Diensten sowie deren Zusammenspiel innerhalb einer gemeinsamen Docker-Umgebung.
 
-Während der Realisierungs- und Testphase traten verschiedene praxisnahe Probleme auf. Dazu gehörten unter anderem Initialisierungsprobleme bei MariaDB, fehlende Persistenz bei Nextcloud sowie die komplexe Benutzer- und Ersteinrichtung von Gogs. Diese Herausforderungen zeigten deutlich, wie wichtig eine saubere Konfiguration von Volumes, Umgebungsvariablen und Initialisierungsabläufen ist.
+Während der Realisierungs- und Testphase traten verschiedene praxisnahe Herausforderungen auf. Dazu gehörten unter anderem Initialisierungsprobleme bei MariaDB, fehlende Persistenz bei Nextcloud sowie Schwierigkeiten bei der Benutzererstellung und Anmeldung beim Git-Server Gogs. Trotz korrekt gesetzter Umgebungsvariablen konnte der Benutzer nicht zuverlässig automatisiert angelegt werden, was den produktiven Einsatz erschwerte.
 
-Durch das systematische Analysieren von Logdateien, gezieltes Testen einzelner Komponenten und schrittweises Eingrenzen der Fehlerursachen konnten die meisten Probleme behoben werden. Dabei wurde mir bewusst, dass nicht alle Dienste vollständig automatisiert eingerichtet werden können und dass bei gewissen Applikationen – wie beispielsweise Gogs – eine manuelle Ersteinrichtung trotz vordefinierter Variablen notwendig bleibt.
+Nach Analyse der Problematik und Studium der Dokumentation wurde entschieden, von Gogs auf Gitea zu wechseln. Gitea erwies sich als stabiler, besser dokumentiert und benutzerfreundlicher in der Ersteinrichtung. Der Wechsel führte zu einer zuverlässigen Benutzerverwaltung und einer deutlich einfacheren Inbetriebnahme des Git-Dienstes. Diese Erfahrung zeigte, dass technologische Entscheidungen im Projektverlauf kritisch hinterfragt und bei Bedarf angepasst werden müssen.
 
-Zusammenfassend hat mir dieses Projekt gezeigt, dass der Einsatz von Docker nicht nur technisches Wissen erfordert, sondern auch ein strukturiertes Vorgehen, Geduld bei der Fehlersuche und eine sorgfältige Dokumentation. Die gewonnenen Erkenntnisse sind praxisnah und lassen sich gut auf reale KMU-Umgebungen übertragen, insbesondere in Bezug auf Persistenz, Sicherheit und Wartbarkeit.
+Durch das systematische Auswerten von Logdateien, gezieltes Testen einzelner Komponenten und schrittweises Eingrenzen der Fehlerursachen konnten die identifizierten Probleme erfolgreich behoben werden. Dabei wurde deutlich, wie wichtig eine saubere Planung von Persistenz, Initialisierung und Sicherheitsaspekten in containerisierten Umgebungen ist.
+
+Zusammenfassend hat mir dieses Projekt gezeigt, dass der Einsatz von Docker nicht nur technisches Know-how erfordert, sondern auch ein strukturiertes Vorgehen, Flexibilität bei Entscheidungen und eine sorgfältige Dokumentation. Die gewonnenen Erkenntnisse sind praxisnah und lassen sich gut auf reale KMU-Umgebungen übertragen, insbesondere im Bereich Wartbarkeit, Sicherheit und Betrieb von Microservices.
