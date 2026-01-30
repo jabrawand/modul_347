@@ -52,10 +52,9 @@ NEXTCLOUD_DB_USER=nextcloud
 NEXTCLOUD_DB_PASSWORD=nextcloudpass
 NEXTCLOUD_DB_ROOT_PASSWORD=rootpass
 
-GOGS_DB_NAME=gogs
-GOGS_DB_USER=gogs
-GOGS_DB_PASSWORD=gogspass
-GOGS_DB_ROOT_PASSWORD=rootpass
+GITEA_DB_NAME=gitea
+GITEA_DB_USER=gitea
+GITEA_DB_PASSWORD=giteapass
 ```
 
 > [!NOTE]
@@ -94,9 +93,9 @@ Nach erfolgreichem Start sind die Dienste über folgende Ports erreichbar:
 | Portainer | http://localhost:9000 |
 | Nextcloud | http://localhost:8081 |
 | MediaWiki | http://localhost:8085 |
-| Gogs | http://localhost:3000 |
+| Gitea | http://localhost:3000 |
 
-Beim ersten Aufruf von Nextcloud und MediaWiki erfolgt die webbasierte Ersteinrichtung.
+Beim ersten Aufruf von Nextcloud und MediaWiki und Gitea erfolgt die webbasierte Ersteinrichtung.
 
 ---
 ## Portainer 
@@ -117,19 +116,28 @@ Beim ersten Aufruf von Nextcloud und MediaWiki erfolgt die webbasierte Ersteinri
 4. Nextcloud ist eingerichtet und betriebsbereit
 
 ---
-## Gogs
+## Gitea
 1. Webbrowser öffnen und URL eingeben (*http://localhost:3000*)
-2. Auf der Initialseite die Datenbank konfigurieren
-   1. Datenbanktyp: **MySQL**
-   2. Host: `gogs-db:3306`
+2. Folgende Datenbankeinstellungen überprüfen:
+   1. Datenbanktyp: **PostgreSQL**
+   2. Host: `gitea-db:5432`
    3. Benutzername: (gemäss `.env`)
    4. Passwort: (gemäss `.env`)
-   5. Datenbankname: `gogs`
-3. Applikationseinstellungen prüfen:
-   1. Domain: `localhost`
-   2. HTTP-Port: `3000`
+   5. Datenbankname: `gitea`
+3. Allgemeine Einstellungen prüfen:
+   1. Repository-Verzeichnis: `/data/git/repositories`
+   2. Git-LSF-Wurzelpfad: `/data/git/lsf`
+   3. Ausführen als: `git`
+   4. Server-Domain: `localhost`
+   5. SSH-Server-Port: `22`
+   6. HTTP-Listen-Port: `3000`
+   7. Gitea-Basis-URL: `http://localhost:3000/`
+   8. Logdateipfad: `/data/gitea/log`
 4. Installation abschiessen
 5. Einloggen
+   1. Benutzername: (gemäss `.env`)
+   2. E-Mail: `test@beispiel.com`
+   3. Passwort: (gemäss `.env`)
 6. Gogs ist nun einsatzbereit
 
 ## MediaWiki
@@ -138,8 +146,8 @@ Beim ersten Aufruf von Nextcloud und MediaWiki erfolgt die webbasierte Ersteinri
 3. Sprache auswählen
 4. Als Datenbanktyp **MySQL / MariaDB** wählen
 5. Datenbankverbindung konfigurieren:
-   1. Datenbank-Host: mediawiki-db
-   2. Datenbankname: mediawiki
+   1. Datenbank-Host: `mediawiki-db`
+   2. Datenbankname: `mediawiki`
    3. Benutzername: (gemäss `.env`)
    4. Passwort: (gemäss `.env`)
 6. Wiki-Name und Administrator-Konto festlegen
