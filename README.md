@@ -147,6 +147,7 @@ Beim ersten Aufruf von Nextcloud und MediaWiki erfolgt die webbasierte Ersteinri
 
 > [!IMPORTANT]
 > Nach dem Abschluss wird von MediaWiki ein `LocalSettings.php` erzeugt, welches zwingend auf der selben Ebene wie das `docker-compose.yml` abgelegt werden muss.
+Im docker-compose muss die auskommentierte Zeile 28 aktiviert werden. 
 >
 
 Der `mediawiki`-Container muss nun mit folgendem Befehl neu gestartet werden:
