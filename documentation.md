@@ -290,7 +290,7 @@ Die Tests wurden in einer kontrollierten Umgebung durchgeführt, welche dem gepl
 | T3        | Repository erstellen | Repository wird erfolgreich angelegt                                                                         | OK       |
 | T4        | Neustart Container   | Container kann erfolgreich neugestartet werden, erneutes Login ist möglich und Repository ist noch vorhanden | OK       |
 
-![Gitea](./images/KMU_gogs.png)
+![Gitea](./images/KMU_gitea.png)
 
 ---
 # 7. Sicherheitskonzept
