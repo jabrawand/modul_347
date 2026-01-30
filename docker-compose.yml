@@ -127,9 +127,9 @@ services:
     container_name: gitea-db
     restart: always
     environment:
-      POSTGRES_DB: gitea
-      POSTGRES_USER: gitea
-      POSTGRES_PASSWORD: root
+      POSTGRES_DB: ${GITEA_DB_NAME}
+      POSTGRES_USER: ${GITEA_DB_USER}
+      POSTGRES_PASSWORD: ${GITEA_DB_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - gitea_db:/var/lib/postgresql/data
