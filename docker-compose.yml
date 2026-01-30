@@ -84,7 +84,6 @@ services:
       MYSQL_PASSWORD: ${NEXTCLOUD_DB_PASSWORD}
       MYSQL_DATABASE: ${NEXTCLOUD_DB_NAME}
       MYSQL_USER: ${NEXTCLOUD_DB_USER}
-
     volumes:
       - nextcloud_db:/var/lib/mysql
     networks:
@@ -100,8 +99,16 @@ services:
     ports:
       - "3000:3000"
       - "2222:22"
+    environment:
+      USER: ${GOGS_DB_USER}
+      PASSWD: ${GOGS_DB_PASSWORD}
+      DB_TYPE: mysql
+      DB_HOST: db:3306
+      DB_NAME: gogs
+      DB_USER: ${GOGS_DB_USER}
+      DB_PASSWD: ${GOGS_DB_PASSWORD}
     volumes:
-      - gogs_data:/data/log
+      - gogs_data:/data
     depends_on: 
       - gogs-db
     networks:
