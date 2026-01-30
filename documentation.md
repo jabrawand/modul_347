@@ -134,10 +134,33 @@ Für jeden Hauptdienst wurden Funktionstests definiert (siehe Kapitel 6)
 ---
 ## 4.2 Auswahl Git-Server
 
-**Tabelle 4.2– Vergleich Gitea & Gogs**
+**Tabelle 4.2 – Vergleich Gitea & Gogs**
+
+| Eigenschaften | Gogs | Gitea |
+| ------------- | ------- | ----------- |
+| Ressourcennutzung | Leichtgewichtig | etwas schwerer |
+| Installation | Einfach und schnell | Einfach |
+| Funktionsumfang | Grundlegende Features | Zusätzliche Features |
+| Community | Klein | Wachsend |
+| Updates | Regelmässig, weniger oft | Häufig und schneller |
 
 **Entscheidung**: Gogs
 **Begrünung**: Ressourcenarm und für KMU ausreichend.
+
+---
+
+## 4.3 Auswahl Persistenz
+
+**Tabelle 4.3 - Vergleich Volumes & Bind Mounts**
+
+| Eigenschaften | Volumes | Bind Mounts |
+| ------------- | ------- | ----------- |
+| Verwaltung | Docker-CLI | Direkt auf Host |
+| Isolation | Unabhängig von Host | an Host gebunden |
+| Datenpersistenz | Dauerhafte Lösung | Entwicklertests |
+
+**Entscheidung**: Docker Volumes
+**Begrünung**: Unabhängig vom Host, Dauerhaft
 
 ---
 
