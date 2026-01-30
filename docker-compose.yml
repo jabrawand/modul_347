@@ -25,7 +25,7 @@ services:
       - "8085:80"
     volumes:
       - mediawiki_data:/var/www/html/images
-      - /Users/jasminbrawand/Documents/Schule/WISS/347/modul_347/LocalSettings.php:/var/www/html/LocalSettings.php 
+      - ./LocalSettings.php:/var/www/html/LocalSettings.php 
     networks:
       - kmu_network
     depends_on:
